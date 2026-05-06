@@ -3,10 +3,14 @@ from dotenv import load_dotenv
 from groq import Groq
 import os
 import re
+import logging
 
+# ---------------- INIT ----------------
 load_dotenv()
 
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.INFO)
 
 # ---------------- CONFIG ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,21 +25,27 @@ def load_data():
         try:
             with open(os.path.join(DATA_DIR, f"{lang}.txt"), "r", encoding="utf-8") as f:
                 data[lang] = f.read()
-        except:
+        except Exception as e:
+            logging.warning(f"{lang}.txt load failed: {e}")
             data[lang] = ""
     return data
 
 DATA_STORE = load_data()
 
 # ---------------- GROQ ----------------
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+if not GROQ_API_KEY:
+    logging.error("❌ GROQ_API_KEY not found in environment variables")
+
+client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 MODELS = [
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant"
 ]
 
-# ---------------- LANGUAGE DETECTION (FIXED) ----------------
+# ---------------- LANGUAGE DETECTION ----------------
 def detect_language(text):
     if re.search(r'[\u0900-\u097F]', text):
 
@@ -62,10 +72,7 @@ def is_sandip_related(question):
         "actor", "politics", "stock", "news"
     ]
 
-    if any(b in q for b in blocked):
-        return False
-
-    return True
+    return not any(b in q for b in blocked)
 
 # ---------------- CONTEXT SEARCH ----------------
 def get_relevant_context(text, question):
@@ -98,8 +105,11 @@ def is_context_used(context, question):
             matches += 1
     return matches
 
-# ---------------- RESPONSE GENERATOR (FIXED 🔥) ----------------
+# ---------------- RESPONSE GENERATOR ----------------
 def generate_answer(question, context, lang):
+
+    if not client:
+        return "⚠️ AI service not configured properly."
 
     system_prompt = f"""
 You are a smart AI assistant for Sandip University 🎓
@@ -109,7 +119,6 @@ STRICT RULES:
 - Use given context first
 - You MUST reply ONLY in {lang}
 - Do NOT use English if {lang} is hindi or marathi
-- Never say you cannot speak {lang}
 - Always try to answer in {lang}
 - Keep answer short and clear
 - Add emojis naturally 😊
@@ -136,7 +145,7 @@ Question:
             return response.choices[0].message.content
 
         except Exception as e:
-            print(f"{model} failed:", e)
+            logging.error(f"{model} failed: {e}")
 
     return "⚠️ AI service temporarily unavailable. Please try again later."
 
@@ -167,48 +176,30 @@ def ask():
         if not question:
             return jsonify({"answer": "⚠️ Please ask a question."})
 
-        # 🌐 Language detect
         lang = detect_language(question)
 
-        # 🚫 Domain filter
         if not is_sandip_related(question):
             return jsonify({
                 "answer": "❌ Only Sandip University related questions allowed 🎓"
             })
 
-        # 📚 Context fetch
         context_full = DATA_STORE.get(lang, "")
         context = get_relevant_context(context_full, question)
 
-        # 🔍 DEBUG PRINT
         match_score = is_context_used(context, question)
 
-        print("\n========= DEBUG =========")
-        print("Question:", question)
-        print("Match Score:", match_score)
+        logging.info(f"Question: {question}")
+        logging.info(f"Match Score: {match_score}")
 
-        if match_score > 2:
-            print("✅ DATA SOURCE: TEXT FILE (context used)")
-        elif match_score > 0:
-            print("⚠️ DATA SOURCE: PARTIAL MATCH (LLM may enhance)")
-        else:
-            print("❌ NO DATA FOUND → AI GUESS MODE")
-
-        print("=========================\n")
-
-        # 🤖 Answer generate
         answer = generate_answer(question, context, lang)
 
-        # 🔥 FINAL LANGUAGE FORCE FIX
-        if lang == "marathi":
-            answer = "उत्तर: " + answer
-        elif lang == "hindi":
+        if lang in ["marathi", "hindi"]:
             answer = "उत्तर: " + answer
 
         return jsonify({"answer": answer})
 
     except Exception as e:
-        print("ERROR:", e)
+        logging.error(f"ERROR: {e}")
         return jsonify({
             "answer": "⚠️ Server issue aaya hai, please dubara try karo."
         })
@@ -220,4 +211,4 @@ def health():
 
 # ---------------- RUN ----------------
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run()
