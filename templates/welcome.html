@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>College AI Chatbot | Smart Assistant for Students</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fc;
+            color: #1e293b;
+            scroll-behavior: smooth;
+            line-height: 1.5;
+        }
+
+        /* Header Styles */
+        .header {
+            background: #ffffff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 2px 6px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(2px);
+        }
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo i {
+            font-size: 2rem;
+            color: #3b82f6;
+            background: #eef2ff;
+            padding: 8px;
+            border-radius: 18px;
+        }
+        .logo h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            color: #1e293b;
+            transition: 0.2s;
+        }
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+        .nav-links .btn-outline {
+            border: 1.5px solid #3b82f6;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            color: #3b82f6;
+            background: transparent;
+            font-weight: 600;
+        }
+        .nav-links .btn-outline:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1280px;
+            margin: 2rem auto;
+            padding: 2rem 2rem 3rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 3rem;
+        }
+        .hero-content {
+            flex: 1.2;
+        }
+        .hero-badge {
+            background: #e0e7ff;
+            color: #1e40af;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+        }
+        .hero-content h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .gradient-text {
+            background: linear-gradient(120deg, #2563eb, #0f2b6d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-content p {
+            font-size: 1.2rem;
+            color: #334155;
+            margin: 1.5rem 0;
+            max-width: 550px;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 48px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.25s ease;
+            box-shadow: 0 6px 14px rgba(59,130,246,0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(59,130,246,0.3);
+        }
+        .btn-secondary {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 0.9rem 2rem;
+            border-radius: 48px;
+            font-weight: 500;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .hero-image {
+            flex: 1;
+            background: linear-gradient(145deg, #d9e6ff, #ffffff);
+            border-radius: 48px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+        }
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 32px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        /* Features / Services */
+        .features {
+            background: #ffffff;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+        }
+        .features-grid {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+        }
+        .feature-card {
+            background: #f8fafc;
+            padding: 2rem 1rem;
+            border-radius: 32px;
+            transition: all 0.25s;
+            border: 1px solid #eef2ff;
+        }
+        .feature-card i {
+            font-size: 2.8rem;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin: 1rem 0 0.8rem;
+        }
+
+        /* Reviews Section */
+        .reviews {
+            background: #f1f5f9;
+            padding: 4rem 2rem;
+        }
+        .review-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .review-card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            flex: 1;
+            min-width: 260px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+        .stars {
+            color: #fbbf24;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        .review-text {
+            font-style: normal;
+            font-weight: 500;
+            margin: 1rem 0;
+            color: #0f172a;
+        }
+        .reviewer {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .reviewer img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .reviewer-info h4 {
+            font-weight: 700;
+        }
+
+        /* Chatbot Preview Banner */
+        .demo-banner {
+            max-width: 1200px;
+            margin: 4rem auto;
+            background: linear-gradient(120deg, #0f172a, #1e293b);
+            border-radius: 48px;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+        }
+        .demo-banner h2 {
+            font-size: 2rem;
+        }
+        .demo-banner p {
+            margin: 1rem 0;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0b1120;
+            color: #cbd5e1;
+            padding: 3rem 2rem 2rem;
+        }
+        .footer-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        .footer-col h4 {
+            color: white;
+            margin-bottom: 1.2rem;
+        }
+        .footer-col p {
+            margin: 0.5rem 0;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #1e293b;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 780px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <h1>Sandip University <span style="color:#2563eb;">AI</span></h1>
+            </div>
+            <div class="nav-links">
+                
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Welcome Area -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-graduation-cap"></i> AI-Powered College Assistant
+            </div>
+            <h1>Your <span class="gradient-text">Smart AI Chatbot</span> for College Info</h1>
+            <p>Get instant answers about courses, exams, fees, events, faculty & more — 24/7. Revolutionize your campus experience.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" id="getStartedBtn"><i class="fas fa-comment-dots"></i> Get Started →</button>
+                
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="https://placehold.co/600x400/eef2ff/2563eb?text=AI+Chatbot+Illustration" alt="AI Chatbot for College">
+        </div>
+    </section>
+
+    <!-- Features / Services -->
+    <section class="features">
+        <h2 class="section-title">Why Students ❤️ Our AI Chatbot</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-brain"></i>
+                <h3>Smart Q&A</h3>
+                <p>Get accurate answers about syllabus, results, and college events instantly.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chalkboard-user"></i>
+                <h3>Faculty Info</h3>
+                <p>Know professors, office hours, and department contacts.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>Exam Updates</h3>
+                <p>Time tables, hall tickets, and important deadlines.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-rupee-sign"></i>
+                <h3>Fee Structure</h3>
+                <p>Scholarships, payment links, and financial aid help.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section with images -->
+    <section class="reviews" id="reviews">
+        <h2 class="section-title">Trusted by 2000+ Students</h2>
+        <div class="review-container">
+            <div class="review-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="review-text">"The AI chatbot solved my exam timetable confusion within seconds. Best tool for college!"</p>
+                <div class="reviewer">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="student">
+                    <div class="reviewer-info">
+                        <h4>Neha Sharma</h4>
+                        <p>B.Tech CSE</p>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+                <p class="review-text">"Super fast responses, gives accurate fee details and scholarship info instantly. Highly recommended."</p>
+                <div class="reviewer">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="student">
+                    <div class="reviewer-info">
+                        <h4>Rahul Verma</h4>
+                        <p>MCA Final Year</p>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="review-text">"I love the UI and how quickly it fetches faculty contacts. A game changer for freshmen."</p>
+                <div class="reviewer">
+                    <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="student">
+                    <div class="reviewer-info">
+                        <h4>Aditya Patil</h4>
+                        <p>BBA Student</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Banner / CTA -->
+    <div class="demo-banner">
+        <h2>🚀 Ready to simplify college information?</h2>
+        <p>Ask anything — from admission forms to library timings, our AI is here to help 24x7.</p>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4><i class="fas fa-robot"></i> CollegeAI Chatbot</h4>
+                <p>Official AI assistant for students & faculty.</p>
+               
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <p>About Us</p>
+                <p>Privacy Policy</p>
+                <p>Terms of Use</p>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <p>FAQs</p>
+                <p>Developer API</p>
+                <p>Student Blog</p>
+            </div>
+            <div class="footer-col">
+                <h4>Follow Us</h4>
+                <p><i class="fab fa-instagram"></i> Instagram</p>
+                <p><i class="fab fa-twitter"></i> Twitter</p>
+                <p><i class="fab fa-linkedin"></i> LinkedIn</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 CollegeAI — Smart Campus Assistant. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Get Started button redirection to dashboard.html
+        const btn1 = document.getElementById('getStartedBtn');
+        const btn2 = document.getElementById('getStartedBtn2');
+
+        function redirectToDashboard() {
+    window.location.href = '/dashboard';
+}
+
+        btn1.addEventListener('click', redirectToDashboard);
+        btn2.addEventListener('click', redirectToDashboard);
+
+        // Optional: add smooth hover microinteractions
+        const allBtns = document.querySelectorAll('.btn-primary, .btn-secondary');
+        allBtns.forEach(btn => {
+            btn.addEventListener('mouseenter', (e) => {
+                if(btn.classList.contains('btn-secondary')) {
+                    btn.style.transform = 'translateY(-2px)';
+                }
+            });
+            btn.addEventListener('mouseleave', (e) => {
+                btn.style.transform = 'translateY(0px)';
+            });
+        });
+        console.log("Welcome Page Loaded — AI College Chatbot");
+    </script>
+</body>
+</html>
